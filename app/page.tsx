@@ -68,7 +68,7 @@ const TeapotState = proxy<StateType>({
 
 function Home() {
     const [selectedModel, setSelectedModel] = useState<string>("Shoe");
-    const [linkOpened, setLinkOpened] = useState<boolean>(false);
+
     const controls = useRef<OrbitControlsImpl>(null);
 
     const updateShoeCurrent = (value: string | null) => {
@@ -117,12 +117,7 @@ function Home() {
             case "Insect":
                 return <Insect colors={InsectState.colors} updateCurrent={updateInsectCurrent} />;
             case "Teapot":
-                return (
-                    <Teapot
-                        colors={{ lid: TeapotState.colors.lid, base: TeapotState.colors.base }}
-                        updateCurrent={updateTeapotCurrent}
-                    />
-                );
+                return <Teapot colors={TeapotState.colors} updateCurrent={updateTeapotCurrent} />;
             default:
                 return null;
         }

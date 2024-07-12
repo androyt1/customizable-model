@@ -25,18 +25,17 @@ type GLTFResult = GLTF & {
     animations: THREE.AnimationClip[];
 };
 
-interface TeapotProps {
+type Props = JSX.IntrinsicElements["group"] & {
+    updateCurrent: (value: string | null) => void;
     colors: {
-        lid: string;
-        base: string;
+        [key: string]: string;
     };
-    updateCurrent: (name: string | null) => void;
-}
+};
 
-const Teapot = (props: TeapotProps) => {
+const Teapot = (props: Props) => {
     const { nodes } = useGLTF("/models/Teapot/scene.gltf") as GLTFResult;
-    const snap = useSnapshot(props.colors);
     const [hovered, setHovered] = useState<string | null>(null);
+    const snap = useSnapshot(props.colors);
 
     useEffect(() => {
         const cursor = `<svg width="64" height="64" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path fill="rgba(255, 255, 255, 0.5)" d="M29.5 54C43.031 54 54 43.031 54 29.5S43.031 5 29.5 5 5 15.969 5 29.5 15.969 54 29.5 54z" stroke="#000"/><g filter="url(#filter0_d)"><path d="M29.5 47C39.165 47 47 39.165 47 29.5S39.165 12 29.5 12 12 19.835 12 29.5 19.835 47 29.5 47z" fill="${
