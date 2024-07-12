@@ -11,10 +11,17 @@ import Loader from "./components/Loader";
 import Insect from "./components/insect";
 import ModelPicker from "./components/model-picker";
 import ColorPicker from "./components/color-picker";
-
 import Teapot from "./components/teapot";
+import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
-const RocketState = proxy({
+type StateType = {
+    current: string | null;
+    colors: {
+        [key: string]: string;
+    };
+};
+
+const RocketState = proxy<StateType>({
     current: null,
     colors: {
         hull: "#d3d3d3",
@@ -24,7 +31,8 @@ const RocketState = proxy({
         window: "#a8a8a8",
     },
 });
-const AxeState = proxy({
+
+const AxeState = proxy<StateType>({
     current: null,
     colors: {
         body: "#a8a8a8",
@@ -33,7 +41,8 @@ const AxeState = proxy({
         inner: "#d3d3d3",
     },
 });
-const ShoeState = proxy({
+
+const ShoeState = proxy<StateType>({
     current: null,
     colors: {
         laces: "#d3d3d3",
@@ -46,89 +55,76 @@ const ShoeState = proxy({
         patch: "#d3d3d3",
     },
 });
-const InsectState = proxy({
+
+const InsectState = proxy<StateType>({
     current: null,
     colors: { body: "#d3d3d3", shell: "#a8a8a8" },
 });
-const TeapotState = proxy({
+
+const TeapotState = proxy<StateType>({
     current: null,
     colors: { lid: "#d3d3d3", base: "#a8a8a8" },
 });
 
 function Home() {
-    const [selectedModel, setSelectedModel] = useState("Shoe");
-    const [linkOpened, setLinkOpened] = useState(false);
-    const controls = useRef();
+    const [selectedModel, setSelectedModel] = useState<string>("Shoe");
+    const [linkOpened, setLinkOpened] = useState<boolean>(false);
+    const controls = useRef<OrbitControlsImpl>(null);
 
-    const updateShoeCurrent = (value) => {
+    const updateShoeCurrent = (value: string | null) => {
         ShoeState.current = value;
     };
-    const updateShoeColor = (pro, value) => {
+    const updateShoeColor = (pro: string, value: string) => {
         ShoeState.colors[pro] = value;
     };
 
-    const updateAxeCurrent = (value) => {
+    const updateAxeCurrent = (value: string | null) => {
         AxeState.current = value;
     };
-    const updateAxeColor = (pro, value) => {
+    const updateAxeColor = (pro: string, value: string) => {
         AxeState.colors[pro] = value;
     };
 
-    const updateRocketCurrent = (value) => {
+    const updateRocketCurrent = (value: string | null) => {
         RocketState.current = value;
     };
-    const updateRocketColor = (pro, value) => {
+    const updateRocketColor = (pro: string, value: string) => {
         RocketState.colors[pro] = value;
     };
 
-    const updateInsectCurrent = (value) => {
+    const updateInsectCurrent = (value: string | null) => {
         InsectState.current = value;
     };
-    const updateInsectColor = (pro, value) => {
+    const updateInsectColor = (pro: string, value: string) => {
         InsectState.colors[pro] = value;
     };
 
-    const updateTeapotCurrent = (value) => {
+    const updateTeapotCurrent = (value: string | null) => {
         TeapotState.current = value;
     };
-    const updateTeapotColor = (pro, value) => {
+    const updateTeapotColor = (pro: string, value: string) => {
         TeapotState.colors[pro] = value;
     };
 
     const renderSelectedModel = () => {
         switch (selectedModel) {
             case "Shoe":
-                return (
-                    <Shoe castShadow colors={ShoeState.colors} updateCurrent={updateShoeCurrent} />
-                );
+                return <Shoe colors={ShoeState.colors} updateCurrent={updateShoeCurrent} />;
             case "Rocket":
-                return (
-                    <Rocket
-                        castShadow
-                        colors={RocketState.colors}
-                        updateCurrent={updateRocketCurrent}
-                    />
-                );
+                return <Rocket colors={RocketState.colors} updateCurrent={updateRocketCurrent} />;
             case "Axe":
-                return <Axe castShadow colors={AxeState.colors} updateCurrent={updateAxeCurrent} />;
+                return <Axe colors={AxeState.colors} updateCurrent={updateAxeCurrent} />;
             case "Insect":
-                return (
-                    <Insect
-                        castShadow
-                        colors={InsectState.colors}
-                        updateCurrent={updateInsectCurrent}
-                    />
-                );
+                return <Insect colors={InsectState.colors} updateCurrent={updateInsectCurrent} />;
             case "Teapot":
                 return (
                     <Teapot
-                        castShadow
-                        colors={TeapotState.colors}
+                        colors={{ lid: TeapotState.colors.lid, base: TeapotState.colors.base }}
                         updateCurrent={updateTeapotCurrent}
                     />
                 );
             default:
-                break;
+                return null;
         }
     };
 
@@ -145,13 +141,13 @@ function Home() {
             case "Teapot":
                 return <ColorPicker state={TeapotState} updateColor={updateTeapotColor} />;
             default:
-                break;
+                return null;
         }
     };
 
-    const updateSelectedModel = (selectedModel) => {
-        controls.current.reset();
-        setSelectedModel(selectedModel);
+    const updateSelectedModel = (model: string) => {
+        controls.current?.reset();
+        setSelectedModel(model);
     };
 
     return (
